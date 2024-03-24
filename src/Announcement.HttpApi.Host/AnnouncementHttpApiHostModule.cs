@@ -135,7 +135,11 @@ public class AnnouncementHttpApiHostModule : AbpModule
     {
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
-            options.ConventionalControllers.Create(typeof(AnnouncementApplicationModule).Assembly);
+            options.ConventionalControllers
+                    .Create(typeof(AnnouncementApplicationModule).Assembly, opts =>
+                    {
+                        //opts.RootPath = "api/announcements"; 
+                    });
         });
     }
 
