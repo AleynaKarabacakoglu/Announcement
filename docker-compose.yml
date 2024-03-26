@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  announcement-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      - "8089:80"
+    networks:
+      - announcement-network
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server
+    container_name: announcement-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Announcement2024+!
+    ports:
+      - "1444:1433"
+    networks:
+      - announcement-network
+
+networks:
+  announcement-network:
