@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Announcement.BacgroundJobs.Schedules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,6 +36,8 @@ public class Program
             await builder.AddApplicationAsync<AnnouncementHttpApiHostModule>();
             var app = builder.Build();
             await app.InitializeApplicationAsync();
+            RecurringJobs.ScheduleCreateAnnouncementJob();
+            RecurringJobs.ScheduleDeleteAnnouncementJob();
             await app.RunAsync();
             return 0;
         }

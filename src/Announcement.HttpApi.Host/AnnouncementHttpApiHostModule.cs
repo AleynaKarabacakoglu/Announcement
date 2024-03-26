@@ -29,6 +29,7 @@ using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Hangfire;
 
 namespace Announcement;
 
@@ -62,7 +63,7 @@ public class AnnouncementHttpApiHostModule : AbpModule
     {
         var configuration = context.Services.GetConfiguration();
         var hostingEnvironment = context.Services.GetHostingEnvironment();
-
+        ConfigureHangfire(context, configuration);
         ConfigureAuthentication(context);
         ConfigureBundles();
         ConfigureUrls(configuration);
@@ -210,6 +211,7 @@ public class AnnouncementHttpApiHostModule : AbpModule
         app.UseUnitOfWork();
         app.UseDynamicClaims();
         app.UseAuthorization();
+       
 
         app.UseSwagger();
         app.UseAbpSwaggerUI(c =>
@@ -220,9 +222,19 @@ public class AnnouncementHttpApiHostModule : AbpModule
             c.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
             c.OAuthScopes("Announcement");
         });
-
+        app.UseHangfireServer();
+        app.UseHangfireDashboard();
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();
+
     }
+    private void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
+    {
+        context.Services.AddHangfire(config =>
+        {
+            config.UseSqlServerStorage(configuration.GetConnectionString("Default"));
+        });
+    }
+   
 }
